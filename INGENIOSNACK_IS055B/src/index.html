@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,15 +16,70 @@
             IngenioSnack
         </div>
         <nav class="view-toggle">
-            <button id="btn-view-home" class="active"><i class="fa-solid fa-utensils"></i> Menú</button>
-            <button id="btn-view-client"><i class="fa-solid fa-user"></i> Cliente</button>
-            <button id="btn-view-admin"><i class="fa-solid fa-shop"></i> Admin</button>
+            <button id="btn-view-home" class="active" style="display: none;"><i class="fa-solid fa-utensils"></i> Menú</button>
+            <button id="btn-view-client" style="display: none;"><i class="fa-solid fa-user"></i> Cliente</button>
+            <button id="btn-view-admin" style="display: none;"><i class="fa-solid fa-shop"></i> Admin</button>
         </nav>
+        <div class="session-bar" id="session-bar" style="display: none;">
+            <span id="session-user"></span>
+            <button id="btn-logout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+        </div>
     </header>
 
     <main class="container">
+        <!-- VISTA INICIO DE SESION -->
+        <section id="view-login" class="view-section active">
+            <div class="login-shell">
+                <div class="login-brand">
+                    <img src="logo_fis.png" alt="Logo FIS">
+                    <h1>IngenioSnack</h1>
+                    <p>Ingresa para ver solo la informacion que te corresponde.</p>
+                </div>
+
+                <div class="login-options single-login">
+                    <div class="login-card">
+                        <i class="fa-solid fa-lock"></i>
+                        <h2>Inicio de sesion</h2>
+                        <p>Usa tu codigo universitario y contrasena para ingresar.</p>
+                        <div class="form-group">
+                            <label for="login-user">Usuario</label>
+                            <input type="text" id="login-user" placeholder="Codigo universitario" maxlength="20" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Contrasena</label>
+                            <input type="password" id="login-password" placeholder="Contrasena">
+                            <p id="login-main-error" class="login-error">Usuario o contrasena incorrectos.</p>
+                        </div>
+                        <button id="btn-login" class="btn-primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> Ingresar</button>
+                        <button id="btn-show-register" class="btn-link">No tengo cuenta, registrarme</button>
+                    </div>
+
+                    <div class="login-card register-card" id="register-card" style="display: none;">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <h2>Crear cuenta</h2>
+                        <p>Registrate para que tus pedidos queden separados de los demas.</p>
+                        <div class="form-group">
+                            <label for="register-name">Nombre</label>
+                            <input type="text" id="register-name" placeholder="Tu nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="register-code">Codigo universitario</label>
+                            <input type="text" id="register-code" placeholder="Ej: 2024101454E" maxlength="11" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Contrasena</label>
+                            <input type="password" id="register-password" placeholder="Minimo 4 caracteres">
+                            <p id="register-error" class="login-error">Completa los datos correctamente.</p>
+                        </div>
+                        <button id="btn-register" class="btn-primary"><i class="fa-solid fa-circle-check"></i> Crear cuenta</button>
+                        <button id="btn-back-login" class="btn-link">Volver al inicio de sesion</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- VISTA MENÚ PRINCIPAL -->
-        <section id="view-home" class="view-section active">
+        <section id="view-home" class="view-section">
             <div class="welcome-banner" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h1>Pide antes del recreo</h1>
@@ -52,7 +108,7 @@
                         </div>
                         <div class="form-group">
                             <label for="student-code">Código Universitario</label>
-                            <input type="text" id="student-code" placeholder="Ej: 2024101454E" maxlength="11" style="text-transform: uppercase;">
+                            <input type="text" id="student-code" placeholder="Ej: 2024101454E" maxlength="11" style="text-transform: uppercase;" readonly>
                         </div>
                         <button id="btn-place-order" class="btn-primary" disabled>
                             <i class="fa-solid fa-paper-plane"></i> Pedir (Pago Contra Entrega)
@@ -89,10 +145,10 @@
         <section id="view-client" class="view-section">
             <div class="client-dashboard" style="max-width: 800px; margin: 0 auto;">
                 <h2 style="font-size: 2rem; color: var(--primary);"><i class="fa-solid fa-magnifying-glass"></i> Rastreador de Pedidos</h2>
-                <p class="stamps-sub">Ingresa tu código universitario para ver el estado de tu almuerzo, historial y tus recompensas.</p>
+                <p class="stamps-sub">Aqui solo aparecen los pedidos, historial y recompensas del alumno que inicio sesion.</p>
                 
                 <div class="form-group" style="margin: 2rem 0;">
-                    <input type="text" id="check-code" placeholder="Ej: 2024101454E" maxlength="11" style="text-transform: uppercase; font-size: 1.2rem; text-align: center;">
+                    <input type="text" id="check-code" placeholder="Ej: 2024101454E" maxlength="11" style="text-transform: uppercase; font-size: 1.2rem; text-align: center;" readonly>
                     <button id="btn-check-status" class="btn-primary" style="margin-top: 1rem;"><i class="fa-solid fa-search"></i> Consultar mis datos</button>
                 </div>
                 
@@ -125,6 +181,8 @@
                             <div class="stamps-fill" id="stamps-fill"></div>
                         </div>
                         <p id="stamps-reward" class="stamps-reward" style="display: none; font-size: 1.2rem; margin-top: 1rem;"><i class="fa-solid fa-gift"></i> ¡Felicidades! Tienes un café gratis esperando por ti.</p>
+                        <button id="btn-claim-reward" class="btn-primary reward-btn" style="display: none; margin-top: 1rem;"><i class="fa-solid fa-mug-hot"></i> Canjear cafe gratis</button>
+                        <p id="stamps-help" class="stamps-help">Cada sandwich entregado suma 1 sello.</p>
                     </div>
                 </div>
             </div>
@@ -173,3 +231,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
