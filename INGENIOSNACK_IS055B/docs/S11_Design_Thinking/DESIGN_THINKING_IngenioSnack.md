@@ -40,6 +40,8 @@ A continuación, se presentan los testimonios directos de los 3 estudiantes de l
 *   **Sobre la Caja Sorpresa:** *"Sí, la compraría, pero solo si la venden directo en los pisos de los laboratorios. Si tengo que bajar hasta la tienda a recogerla en plenos parciales, ya pierde el sentido."*
 *   **¿Qué siente?:** *"Cansancio y pesadez. Ya estás quemado por no dormir y encima tener que aguantar una cola kilométrica te quita las ganas de todo."*
 
+<img width="535" height="359" alt="28e0d9d1-10f4-4860-995a-b8aad1cf14d6" src="https://github.com/user-attachments/assets/76943215-6ada-408b-a8ae-5761e1fc357d" />
+
 
 **FASE 2: DEFINIR**
 POV
