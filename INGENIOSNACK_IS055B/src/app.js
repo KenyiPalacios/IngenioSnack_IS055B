@@ -54,8 +54,44 @@ function saveStamps(stamps) {
     localStorage.setItem('ingenio_stamps', JSON.stringify(stamps));
 }
 
+function getSession() {
+    const session = localStorage.getItem('ingenio_session');
+    return session ? JSON.parse(session) : null;
+}
+
+function saveSession(session) {
+    localStorage.setItem('ingenio_session', JSON.stringify(session));
+}
+
+function clearSession() {
+    localStorage.removeItem('ingenio_session');
+}
+
+function getUsers() {
+    const users = localStorage.getItem('ingenio_users');
+    return users ? JSON.parse(users) : {};
+}
+
+function saveUsers(users) {
+    localStorage.setItem('ingenio_users', JSON.stringify(users));
+}
+
+function ensureDefaultAdmin() {
+    const users = getUsers();
+    if (!users.admin) {
+        users.admin = {
+            username: 'admin',
+            password: 'julio123',
+            role: 'admin',
+            name: 'Sr. Julio'
+        };
+        saveUsers(users);
+    }
+}
+
 // Initialize if empty
 if (!localStorage.getItem('ingenio_products')) saveProducts(initialProducts);
+ensureDefaultAdmin();
 
 // --- Global Variables ---
 let cart = [];
@@ -66,9 +102,26 @@ const btnViewHome = document.getElementById('btn-view-home');
 const btnViewClient = document.getElementById('btn-view-client');
 const btnViewAdmin = document.getElementById('btn-view-admin');
 
+const viewLogin = document.getElementById('view-login');
 const viewHome = document.getElementById('view-home');
 const viewClient = document.getElementById('view-client');
 const viewAdmin = document.getElementById('view-admin');
+
+const sessionBar = document.getElementById('session-bar');
+const sessionUser = document.getElementById('session-user');
+const btnLogout = document.getElementById('btn-logout');
+const loginUser = document.getElementById('login-user');
+const loginPassword = document.getElementById('login-password');
+const btnLogin = document.getElementById('btn-login');
+const loginMainError = document.getElementById('login-main-error');
+const btnShowRegister = document.getElementById('btn-show-register');
+const registerCard = document.getElementById('register-card');
+const registerName = document.getElementById('register-name');
+const registerCode = document.getElementById('register-code');
+const registerPassword = document.getElementById('register-password');
+const registerError = document.getElementById('register-error');
+const btnRegister = document.getElementById('btn-register');
+const btnBackLogin = document.getElementById('btn-back-login');
 
 const studentMenuContainer = document.getElementById('student-menu');
 const cartItemsContainer = document.getElementById('cart-items');
@@ -97,24 +150,35 @@ const statusDisplay = document.getElementById('status-display');
 const stampsCount = document.getElementById('stamps-count');
 const stampsFill = document.getElementById('stamps-fill');
 const stampsReward = document.getElementById('stamps-reward');
+const btnClaimReward = document.getElementById('btn-claim-reward');
 const clientOrdersList = document.getElementById('client-orders-list');
 const clientHistoryList = document.getElementById('client-history-list');
 
 const logoHome = document.getElementById('logo-home');
 
 // --- Event Listeners ---
-logoHome.addEventListener('click', () => switchView('home'));
+logoHome.addEventListener('click', () => goToDefaultView());
 btnViewHome.addEventListener('click', () => switchView('home'));
 btnViewClient.addEventListener('click', () => switchView('client'));
 
 btnViewAdmin.addEventListener('click', () => {
-    // Show login modal instead of switching immediately
-    loginModal.classList.add('show');
-    adminPassword.value = '';
-    loginError.style.display = 'none';
-    adminPassword.focus();
+    switchView('admin');
 });
 
+btnLogin.addEventListener('click', login);
+btnShowRegister.addEventListener('click', showRegister);
+btnBackLogin.addEventListener('click', showLogin);
+btnRegister.addEventListener('click', registerStudent);
+btnLogout.addEventListener('click', logout);
+loginUser.addEventListener('keyup', (e) => {
+    if(e.key === 'Enter') login();
+});
+loginPassword.addEventListener('keyup', (e) => {
+    if(e.key === 'Enter') login();
+});
+registerPassword.addEventListener('keyup', (e) => {
+    if(e.key === 'Enter') registerStudent();
+});
 btnLoginAdmin.addEventListener('click', attemptLogin);
 btnCancelLogin.addEventListener('click', () => loginModal.classList.remove('show'));
 adminPassword.addEventListener('keyup', (e) => {
@@ -124,10 +188,104 @@ adminPassword.addEventListener('keyup', (e) => {
 function attemptLogin() {
     if (adminPassword.value === 'julio123') {
         loginModal.classList.remove('show');
+        saveSession({ role: 'admin', name: 'Sr. Julio' });
+        updateSessionUI();
         switchView('admin');
     } else {
         loginError.style.display = 'block';
     }
+}
+
+function login() {
+    const username = loginUser.value.trim().toUpperCase();
+    const password = loginPassword.value;
+    const users = getUsers();
+    const user = users[username.toLowerCase()] || users[username];
+
+    loginMainError.style.display = 'none';
+
+    if (!user || user.password !== password) {
+        loginMainError.style.display = 'block';
+        return;
+    }
+
+    loginPassword.value = '';
+
+    if (user.role === 'admin') {
+        saveSession({ role: 'admin', name: user.name });
+        updateSessionUI();
+        switchView('admin');
+        showToast('Sesion iniciada');
+        return;
+    }
+
+    saveSession({ role: 'student', code: user.code, name: user.name });
+    updateSessionUI();
+    switchView('home');
+    showToast(`Bienvenido, ${user.name}`);
+}
+
+function registerStudent() {
+    const name = registerName.value.trim();
+    const code = registerCode.value.trim().toUpperCase();
+    const password = registerPassword.value;
+    const users = getUsers();
+
+    registerError.style.display = 'none';
+
+    if (!name || !isValidCode(code) || password.length < 4) {
+        registerError.innerText = 'Completa nombre, codigo valido y una contrasena de minimo 4 caracteres.';
+        registerError.style.display = 'block';
+        return;
+    }
+
+    if (users[code]) {
+        registerError.innerText = 'Ese codigo ya tiene una cuenta.';
+        registerError.style.display = 'block';
+        return;
+    }
+
+    users[code] = {
+        username: code,
+        password,
+        role: 'student',
+        code,
+        name
+    };
+    saveUsers(users);
+
+    loginUser.value = code;
+    loginPassword.value = '';
+    registerName.value = '';
+    registerCode.value = '';
+    registerPassword.value = '';
+    showLogin();
+    showToast('Cuenta creada. Ahora ingresa con tu contrasena.');
+}
+
+function showRegister() {
+    registerCard.style.display = 'block';
+    btnShowRegister.style.display = 'none';
+    registerName.focus();
+}
+
+function showLogin() {
+    registerCard.style.display = 'none';
+    btnShowRegister.style.display = '';
+    loginMainError.style.display = 'none';
+    registerError.style.display = 'none';
+    loginUser.focus();
+}
+
+function logout() {
+    clearSession();
+    cart = [];
+    studentCodeInput.value = '';
+    checkCodeInput.value = '';
+    renderCart();
+    updateSessionUI();
+    switchView('login');
+    showToast('Sesion cerrada');
 }
 
 studentCodeInput.addEventListener('input', validateOrderBtn);
@@ -145,28 +303,31 @@ function isValidCode(code) {
     return regex.test(code);
 }
 
+function isSandwich(item) {
+    const name = item.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    return name.includes('sandwich') || name.includes('ndwich');
+}
+
 btnCheckStatus.addEventListener('click', () => {
-    const code = checkCodeInput.value.trim().toUpperCase();
+    const session = getSession();
+    if (!session || session.role !== 'student') {
+        showToast("Inicia sesion como alumno para consultar tus datos.", "error");
+        switchView('login');
+        return;
+    }
+
+    const code = session.code;
     if (!isValidCode(code)) {
         showToast("Formato inválido. Ej: 2024101454E", "error");
         return;
     }
     
-    // --- Render Stamps ---
-    const stampsData = getStamps();
-    const count = stampsData[code] || 0;
-    
     statusDisplay.style.display = 'block';
-    stampsCount.innerText = count;
-    stampsFill.style.width = `${(count / 10) * 100}%`;
-    
-    if (count >= 10) {
-        stampsReward.style.display = 'block';
-        stampsFill.style.background = '#FF8E53'; 
-    } else {
-        stampsReward.style.display = 'none';
-        stampsFill.style.background = 'var(--secondary)';
-    }
+    renderLoyaltyCard(code);
 
     // --- Render Orders ---
     const allOrders = getOrders();
@@ -216,28 +377,157 @@ btnCheckStatus.addEventListener('click', () => {
     }
 });
 
+btnClaimReward.addEventListener('click', claimReward);
+
+function renderLoyaltyCard(code) {
+    const stampsData = getStamps();
+    const count = stampsData[code] || 0;
+    const visibleCount = Math.min(count, 10);
+    
+    stampsCount.innerText = visibleCount;
+    stampsFill.style.width = `${(visibleCount / 10) * 100}%`;
+    
+    if (count >= 10) {
+        stampsReward.style.display = 'block';
+        btnClaimReward.style.display = 'flex';
+        stampsFill.style.background = '#FF8E53'; 
+    } else {
+        stampsReward.style.display = 'none';
+        btnClaimReward.style.display = 'none';
+        stampsFill.style.background = 'var(--secondary)';
+    }
+}
+
+function claimReward() {
+    const session = getSession();
+    if (!session || session.role !== 'student') {
+        showToast("Inicia sesion como alumno para canjear tu recompensa.", "error");
+        switchView('login');
+        return;
+    }
+
+    const stampsData = getStamps();
+    const currentCount = stampsData[session.code] || 0;
+
+    if (currentCount < 10) {
+        showToast("Aun necesitas 10 sellos para canjear el cafe.", "error");
+        renderLoyaltyCard(session.code);
+        return;
+    }
+
+    stampsData[session.code] = currentCount - 10;
+    saveStamps(stampsData);
+
+    const orders = getOrders();
+    orders.push({
+        id: ticketCounter++,
+        studentCode: session.code,
+        items: [{ id: 'reward-coffee', name: 'Cafe americano gratis', price: 0, icon: '☕' }],
+        total: 0,
+        status: 'completed',
+        reward: true,
+        date: new Date().toISOString()
+    });
+    saveOrders(orders);
+
+    renderLoyaltyCard(session.code);
+    btnCheckStatus.click();
+    showToast("Recompensa canjeada: cafe americano gratis.");
+}
+
 // View Switcher
 function switchView(view) {
+    const session = getSession();
+    
+    if (view === 'home' || view === 'client') {
+        if (!session || session.role !== 'student') {
+            showToast("Inicia sesion como alumno para ver esta seccion.", "error");
+            view = 'login';
+        }
+    }
+
+    if (view === 'admin') {
+        if (!session || session.role !== 'admin') {
+            showToast("Solo el administrador puede ver esta seccion.", "error");
+            view = 'login';
+        }
+    }
+
     btnViewHome.classList.remove('active');
     btnViewClient.classList.remove('active');
     btnViewAdmin.classList.remove('active');
     
+    viewLogin.classList.remove('active');
     viewHome.classList.remove('active');
     viewClient.classList.remove('active');
     viewAdmin.classList.remove('active');
 
-    if (view === 'home') {
+    if (view === 'login') {
+        viewLogin.classList.add('active');
+        loginUser.focus();
+    } else if (view === 'home') {
         btnViewHome.classList.add('active');
         viewHome.classList.add('active');
+        prepareStudentSessionFields();
         renderStudentMenu(); 
     } else if (view === 'client') {
         btnViewClient.classList.add('active');
         viewClient.classList.add('active');
+        prepareStudentSessionFields();
+        statusDisplay.style.display = 'none';
     } else if (view === 'admin') {
         btnViewAdmin.classList.add('active');
         viewAdmin.classList.add('active');
         renderAdminMenu();
         renderAdminOrders();
+    }
+}
+
+function updateSessionUI() {
+    const session = getSession();
+
+    if (!session) {
+        sessionBar.style.display = 'none';
+        btnViewHome.style.display = 'none';
+        btnViewClient.style.display = 'none';
+        btnViewAdmin.style.display = 'none';
+        return;
+    }
+
+    sessionBar.style.display = 'flex';
+
+    if (session.role === 'student') {
+        sessionUser.innerText = `${session.name || 'Alumno'}: ${session.code}`;
+        btnViewHome.style.display = '';
+        btnViewClient.style.display = '';
+        btnViewAdmin.style.display = 'none';
+        prepareStudentSessionFields();
+    } else {
+        sessionUser.innerText = session.name || 'Administrador';
+        btnViewHome.style.display = 'none';
+        btnViewClient.style.display = 'none';
+        btnViewAdmin.style.display = '';
+    }
+}
+
+function prepareStudentSessionFields() {
+    const session = getSession();
+    if (!session || session.role !== 'student') return;
+
+    studentCodeInput.value = session.code;
+    checkCodeInput.value = session.code;
+    validateOrderBtn();
+}
+
+function goToDefaultView() {
+    const session = getSession();
+
+    if (!session) {
+        switchView('login');
+    } else if (session.role === 'admin') {
+        switchView('admin');
+    } else {
+        switchView('home');
     }
 }
 
@@ -332,6 +622,13 @@ function validateOrderBtn() {
 
 function placeOrder() {
     if (cart.length === 0) return;
+    const session = getSession();
+
+    if (!session || session.role !== 'student') {
+        showToast("Inicia sesion como alumno para hacer pedidos.", "error");
+        switchView('login');
+        return;
+    }
     
     // Check if any product became inactive right before ordering (HU-06)
     const currentProducts = getProducts();
@@ -347,7 +644,7 @@ function placeOrder() {
     }
 
     const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const code = studentCodeInput.value.trim().toUpperCase();
+    const code = session.code;
     const orderNumber = ticketCounter++;
     
     const newOrder = {
@@ -491,7 +788,7 @@ window.completeOrder = function(id) {
         // HU-05: Sumar sellos por cada sándwich entregado
         let sandwichesCount = 0;
         order.items.forEach(item => {
-            if (item.name.toLowerCase().includes('sándwich')) {
+            if (isSandwich(item)) {
                 sandwichesCount++;
             }
         });
@@ -501,13 +798,7 @@ window.completeOrder = function(id) {
             const code = order.studentCode;
             if (!stampsData[code]) stampsData[code] = 0;
             
-            // Note: If they have 10, they get a coffee, and it should reset to 0 *after* claiming.
-            // For simplicity, we just keep adding here, but if it reaches 10, they can claim it next time.
             stampsData[code] += sandwichesCount;
-            
-            // If they surpassed 10, we could reset it, but let's let them keep it at 10 to show the reward.
-            if (stampsData[code] > 10) stampsData[code] = 10;
-            
             saveStamps(stampsData);
         }
         
@@ -534,4 +825,6 @@ function showToast(message, type = 'success') {
 }
 
 // Init
-renderStudentMenu();
+updateSessionUI();
+goToDefaultView();
+renderCart();
