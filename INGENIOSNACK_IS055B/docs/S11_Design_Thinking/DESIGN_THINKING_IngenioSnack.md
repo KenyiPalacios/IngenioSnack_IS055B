@@ -1,4 +1,4 @@
-# SESIÓN SEMANA 11: DESIGN THINKING - "Pensando como el Estudiante de la FIS"[cite: 1]
+# SESIÓN SEMANA 11: DESIGN THINKING - "Pensando como el Estudiante de la FIS"
 
 ## FASE 1: EMPATIZAR (Investigación de Usuario)
 
