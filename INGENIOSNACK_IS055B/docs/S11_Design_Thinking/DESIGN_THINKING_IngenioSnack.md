@@ -39,6 +39,8 @@ A continuación, se presentan los testimonios directos de los 3 estudiantes de l
 *   **Sobre la Suscripción:** *"Sería ideal. El Sr. Julio ya sabe que yo siempre pido café cargado y sándwich de triple. Si el sistema automatiza eso y solo paso a recogerlo, me ahorro la vida."*
 *   **Sobre la Caja Sorpresa:** *"Sí, la compraría, pero solo si la venden directo en los pisos de los laboratorios. Si tengo que bajar hasta la tienda a recogerla en plenos parciales, ya pierde el sentido."*
 *   **¿Qué siente?:** *"Cansancio y pesadez. Ya estás quemado por no dormir y encima tener que aguantar una cola kilométrica te quita las ganas de todo."*
+
+
 **FASE 2: DEFINIR**
 POV
 El estudiante de Ingeniería de Sistemas de la UNCP necesita una forma rápida y automática de recibir sus alimentos habituales porque dispone de poco tiempo entre clases y desea evitar las filas sin descuidar su alimentación.
