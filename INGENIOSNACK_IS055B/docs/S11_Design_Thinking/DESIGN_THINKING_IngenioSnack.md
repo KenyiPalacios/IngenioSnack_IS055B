@@ -1,10 +1,10 @@
 # SESIÓN SEMANA 11: DESIGN THINKING - "Pensando como el Estudiante de la FIS"[cite: 1]
 
-## FASE 1: EMPATIZAR (Investigación de Usuario)[cite: 1]
+## FASE 1: EMPATIZAR (Investigación de Usuario)
 
-Para comprender las necesidades y dolores reales de los estudiantes de la Facultad de Ingeniería de Sistemas (FIS) frente a las nuevas propuestas del Sr. Julio (Suscripciones y Caja Sorpresa de Exámenes), realizamos una investigación cualitativa de campo[cite: 1].
+Para comprender las necesidades y dolores reales de los estudiantes de la Facultad de Ingeniería de Sistemas (FIS) frente a las nuevas propuestas del Sr. Julio (Suscripciones y Caja Sorpresa de Exámenes), realizamos una investigación cualitativa de campo
 
-### 1. Diseño de la Encuesta Corta (Microsoft Forms / Entrevista Presencial)[cite: 1]
+### 1. Diseño de la Encuesta Corta (Microsoft Forms / Entrevista Presencial)
 Se estructuró un cuestionario ágil de 5 preguntas rápidas para capturar la experiencia diaria del estudiante sin quitarle más de 5 minutos de su tiempo[cite: 1]:
 
 1. **¿Cuál es tu principal problema o dolor de cabeza al momento de querer alimentarte dentro de la facultad?** *(Respuesta abierta)*
