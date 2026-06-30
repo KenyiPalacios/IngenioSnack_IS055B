@@ -15,9 +15,9 @@ Se estructuró un cuestionario ágil de 5 preguntas rápidas para capturar la ex
 
 ---
 
-### 2. Respuestas Crudas de las Entrevistas (Voces Reales de la FIS)
+### 2. Respuestas de las Entrevistas 
 
-A continuación, se presentan los testimonios directos de los 3 estudiantes de la FIS encuestados durante la investigación, manteniendo su expresión natural y humana:
+A continuación, se presentan los testimonios directos de los 3 estudiantes de la FIS encuestados durante la investigación:
 
 #### **Estudiante 1: Carlos (7mo ciclo)**
 *   **Problema principal:** *"El bendito tiempo. A las 7:45 AM las colas donde el Sr. Julio son una locura. Si te quedas comprando un café, ya fuiste, el ingeniero no te deja entrar al laboratorio o te mira feo todo el ciclo."*
